@@ -9,12 +9,11 @@ class Minesweeper
     # Randomize bomb
     10.times do
       # Place random bomb
-      r_idx = rand(0...10)
-      c_idx = rand(0...10)
-      p @board[r_idx][c_idx]
+      r_idx = rand(0...9)
+      c_idx = rand(0...9)
       until @board[r_idx][c_idx].nil?
-        r_idx = rand(0...10)
-        c_idx = rand(0...10)
+        r_idx = rand(0...9)
+        c_idx = rand(0...9)
       end
       @board[r_idx][c_idx] = Tile.new(true, false, false, r_idx, c_idx, @board)
     end
