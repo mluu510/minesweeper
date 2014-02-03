@@ -1,4 +1,4 @@
-
+# New comment
 #!/usr/bin/env ruby
 
 class Minesweeper
