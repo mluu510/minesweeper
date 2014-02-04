@@ -1,5 +1,7 @@
-# New comment
 #!/usr/bin/env ruby
+
+require 'colorize'
+require 'yaml'
 
 class Minesweeper
   def initialize
@@ -30,14 +32,41 @@ class Minesweeper
     while alive
       self.print_board
       puts "Enter a location to reveal:"
-      pos = gets.chomp.split(',').map { |num| num.to_i }
-      alive = self.reveal(pos)
-      if self.win?
-        p "You've won!"
-        break
+      input = gets.chomp
+      if input == 'save'
+        self.save_game
+        puts 'Game saved'
+      elsif input == 'load'
+        self.load_game
+      else
+        mode = input[0]
+        pos = input[1..-1].split(',').map {|num| num.to_i }
+        if mode == 'f'
+          tile = @board[pos[0]][pos[1]]
+          tile.is_flagged = true
+        else
+          alive = self.reveal(pos)
+          if self.win?
+            puts "You've won!"
+            break
+          end
+        end
       end
     end
     # Print out revealed board
+  end
+
+  def save_game
+    File.open('saved_game.yaml', 'w') do |f|
+      f.puts @board.to_yaml
+    end
+  end
+
+  def load_game(filename='saved_game.yaml')
+    f = File.open(filename)
+    @board = YAML::load(f)
+
+    @board.print_board
   end
 
   def neighbor(pos)
@@ -48,20 +77,27 @@ class Minesweeper
   end
 
   def print_board
-    @board.each do |rows|
-      str = ''
+    puts '  0 1 2 3 4 5 6 7 8'.blue
+    @board.each_with_index do |rows, r_idx|
+      str = "#{r_idx} ".blue
       rows.each do |tile|
-        if tile.is_revealed
+        if tile.is_flagged
+          str += 'F '.red
+        elsif tile.is_revealed
           if tile.is_bombed
-            str += 'B'
-          else tile.bomb_count
-            str += tile.bomb_count.to_s
+            str += 'B '.red
+          else
+            if tile.bomb_count == 0
+              str += "#{tile.bomb_count} ".black
+            else
+              str += "#{tile.bomb_count} "
+            end
           end
         else
-          str += '-'
+          str += '- '
         end
       end
-      p str
+      puts str
     end
   end
 
