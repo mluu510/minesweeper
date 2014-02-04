@@ -28,6 +28,7 @@ class Minesweeper
   end
 
   def play
+    beg_time = Time.now
     alive = true
     while alive
       self.print_board
@@ -53,7 +54,14 @@ class Minesweeper
         end
       end
     end
+    end_time = Time.now
+    time_play = end_time - beg_time
     # Print out revealed board
+  end
+
+  def leader_board(time_play)
+    leader_board_file = File.readlines('leaderboard.txt', 'w').map(&:chomp)
+
   end
 
   def save_game
